@@ -130,7 +130,8 @@ Dokumen ini melacak seluruh fase pengembangan aplikasi **StackUp**, mulai dari i
   - [x] Filter berdasarkan genre spesifik di FilterSheet Backlog Screen.
   - [x] Ekstraksi daftar genre unik secara dinamis dari library game (`availableGenresProvider`).
   - [x] Badge genre aktif dengan tombol hapus 1-tap di Backlog Screen.
-- [ ] **4.4 Play Store Release Preparation**
-  - [ ] Konfigurasi Proguard / R8 rules untuk Isar database obfuscation.
-  - [ ] Pembuatan Android App Bundle (`flutter build appbundle --release`).
-  - [ ] Penyiapan aset screenshot dan deskripsi aplikasi di Google Play Console.
+- [x] **4.4 Play Store Release Preparation**
+  - [x] Konfigurasi Proguard / R8 rules (`proguard-rules.pro`) untuk Isar database obfuscation & local notifications.
+  - [x] Konfigurasi release build type di `build.gradle.kts`.
+  - [x] Pembuatan Android App Bundle (`flutter build appbundle --release`) & Release APK (`flutter build apk --release`).
+  - [ ] Penyiapan aset screenshot dan deskripsi aplikasi di Google Play Console (dapat dilengkapi saat siap rilis).
