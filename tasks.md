@@ -105,10 +105,10 @@ Dokumen ini melacak seluruh fase pengembangan aplikasi **StackUp**, mulai dari i
   - [x] Fitur ekspor seluruh data library ke file `.json` menggunakan JSON murni & native share sheet (`share_plus`).
   - [x] Fitur impor file backup `.json` (`file_picker`) untuk pemulihan data lokal tanpa cloud.
   - [ ] Opsi menyertakan arsip gambar cover ke dalam file zip backup.
-- [ ] **3.3 Auto-fill Metadata Game via API**
-  - [ ] Integrasi REST API (misal RAWG Video Games Database API atau IGDB API).
-  - [ ] Auto-complete judul game saat mengetik di form tambah game.
-  - [ ] Otomatis menarik gambar cover resmi, tanggal rilis, pengembang, dan genre langsung dari web.
+- [x] **3.3 Auto-fill Metadata Game via API**
+  - [x] Integrasi RAWG Video Games Database REST API (`http`).
+  - [x] Pencarian modal bottom sheet langsung dari kolom judul game dengan dialog pengaturan API Key.
+  - [x] Otomatis melengkapi judul, genre, dan mengunduh cover resmi game.
 - [x] **3.4 Local Reminder & Backlog Nudge**
   - [x] Integrasi `flutter_local_notifications` & `timezone` 100% offline.
   - [x] Penjadwalan pengingat mingguan (Weekend Nudge setiap Sabtu jam 19:00).

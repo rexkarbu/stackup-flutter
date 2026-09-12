@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/network/rawg_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../models/backlog_game.dart';
 import '../../../models/game_enums.dart';
@@ -93,6 +94,332 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
     setState(() {
       _genres.remove(genre);
     });
+  }
+
+  Future<bool> _showApiKeyDialog() async {
+    final controller = TextEditingController(text: RawgService.apiKey);
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        title: const Row(
+          children: [
+            Icon(Icons.vpn_key_rounded, color: AppColors.secondary, size: 22),
+            SizedBox(width: 8),
+            Text(
+              'RAWG API Key',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Masukkan API Key RAWG Anda untuk menggunakan fitur pencarian metadata otomatis dan unduh cover resmi.',
+              style: TextStyle(fontSize: 12.5, color: AppColors.textSecondary),
+            ),
+            const SizedBox(height: 14),
+            TextField(
+              controller: controller,
+              style: const TextStyle(color: AppColors.textPrimary, fontSize: 13),
+              decoration: const InputDecoration(
+                hintText: '32-karakter API key...',
+                prefixIcon: Icon(Icons.key, color: AppColors.textMuted, size: 18),
+              ),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'Dapatkan free key di rawg.io/apidocs',
+              style: TextStyle(fontSize: 11.5, color: AppColors.secondary),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Batal', style: TextStyle(color: AppColors.textMuted)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () {
+              if (controller.text.trim().isNotEmpty) {
+                RawgService.apiKey = controller.text.trim();
+                Navigator.of(ctx).pop(true);
+              }
+            },
+            child: const Text('Simpan'),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
+  }
+
+  Future<void> _searchRawgMetadata() async {
+    if (RawgService.apiKey.isEmpty) {
+      final saved = await _showApiKeyDialog();
+      if (!saved || RawgService.apiKey.isEmpty) return;
+    }
+
+    final query = _titleController.text.trim();
+    if (query.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Ketik judul game terlebih dahulu'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+      return;
+    }
+
+    if (!mounted) return;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.surface,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          minChildSize: 0.4,
+          maxChildSize: 0.85,
+          expand: false,
+          builder: (scrollContext, scrollController) {
+            return Column(
+              children: [
+                const SizedBox(height: 12),
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.cardBorder,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.auto_awesome,
+                          color: AppColors.secondary, size: 20),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Hasil Pencarian RAWG: "$query"',
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close,
+                            size: 18, color: AppColors.textMuted),
+                        onPressed: () => Navigator.of(sheetContext).pop(),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(color: AppColors.cardBorder),
+                Expanded(
+                  child: FutureBuilder<List<RawgGameResult>>(
+                    future: RawgService.search(query),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                              color: AppColors.primary),
+                        );
+                      }
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.error_outline_rounded,
+                                    color: Colors.redAccent, size: 36),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Gagal memuat data dari RAWG:\n${snapshot.error}',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    color: AppColors.textSecondary,
+                                    fontSize: 12.5,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+
+                      final results = snapshot.data ?? [];
+                      if (results.isEmpty) {
+                        return const Center(
+                          child: Text(
+                            'Tidak ada game ditemukan untuk kata kunci ini.',
+                            style: TextStyle(
+                              color: AppColors.textMuted,
+                              fontSize: 13,
+                            ),
+                          ),
+                        );
+                      }
+
+                      return ListView.separated(
+                        controller: scrollController,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        itemCount: results.length,
+                        separatorBuilder: (_, __) =>
+                            const Divider(color: AppColors.cardBorder, height: 1),
+                        itemBuilder: (context, index) {
+                          final item = results[index];
+                          return ListTile(
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 6),
+                            leading: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Container(
+                                width: 50,
+                                height: 50,
+                                color: AppColors.card,
+                                child: item.imageUrl != null
+                                    ? Image.network(
+                                        item.imageUrl!,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (_, __, ___) =>
+                                            const Icon(
+                                          Icons.sports_esports_outlined,
+                                          color: AppColors.textMuted,
+                                        ),
+                                      )
+                                    : const Icon(
+                                        Icons.sports_esports_outlined,
+                                        color: AppColors.textMuted,
+                                      ),
+                              ),
+                            ),
+                            title: Text(
+                              item.title,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            subtitle: Text(
+                              [
+                                if (item.releaseYear != null)
+                                  '${item.releaseYear}',
+                                if (item.genres.isNotEmpty)
+                                  item.genres.take(2).join(', '),
+                              ].join(' • '),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppColors.textMuted,
+                              ),
+                            ),
+                            trailing: const Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              size: 14,
+                              color: AppColors.textMuted,
+                            ),
+                            onTap: () {
+                              Navigator.of(sheetContext).pop();
+                              _applyRawgResult(item);
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _applyRawgResult(RawgGameResult item) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => const Center(
+        child: Card(
+          color: AppColors.card,
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(color: AppColors.primary),
+                SizedBox(height: 14),
+                Text(
+                  'Menerapkan metadata & cover...',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    String? localCoverPath;
+    if (item.imageUrl != null && item.imageUrl!.isNotEmpty) {
+      localCoverPath = await RawgService.downloadAndSaveCover(item.imageUrl!);
+    }
+
+    if (mounted) {
+      Navigator.of(context).pop(); // Dismiss loading dialog
+
+      setState(() {
+        _titleController.text = item.title;
+        for (final g in item.genres) {
+          final trimmed = g.trim();
+          if (trimmed.isNotEmpty && !_genres.contains(trimmed)) {
+            _genres.add(trimmed);
+          }
+        }
+        if (localCoverPath != null) {
+          _coverPath = localCoverPath;
+        }
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Metadata & Cover berhasil diterapkan!'),
+          backgroundColor: Color(0xFF10B981),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
   }
 
   Future<void> _saveGame() async {
@@ -219,6 +546,7 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
             children: [
               // Cover Image Picker
               ImagePickerField(
+                key: ValueKey(_coverPath),
                 initialImagePath: _coverPath,
                 onImageSelected: (path) {
                   _coverPath = path;
@@ -241,10 +569,16 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
                 controller: _titleController,
                 textInputAction: TextInputAction.next,
                 style: const TextStyle(color: AppColors.textPrimary),
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'Misal: The Witcher 3: Wild Hunt',
-                  prefixIcon: Icon(Icons.videogame_asset_outlined,
+                  prefixIcon: const Icon(Icons.videogame_asset_outlined,
                       color: AppColors.textMuted, size: 20),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.auto_awesome,
+                        color: AppColors.secondary),
+                    tooltip: 'Cari Metadata via RAWG',
+                    onPressed: _searchRawgMetadata,
+                  ),
                 ),
                 validator: (val) {
                   if (val == null || val.trim().isEmpty) {

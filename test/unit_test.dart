@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:stackup/core/network/rawg_service.dart';
 import 'package:stackup/core/utils/formatters.dart';
 import 'package:stackup/models/backlog_game.dart';
 import 'package:stackup/models/game_enums.dart';
@@ -167,6 +168,38 @@ void main() {
       expect(game.dateStarted, isNull);
       expect(game.dateCompleted, isNull);
       expect(game.dateAdded, isA<DateTime>());
+    });
+  });
+
+  group('RAWG Model Tests', () {
+    test('RawgGameResult.fromJson parses full payload correctly', () {
+      final json = {
+        'name': 'The Witcher 3: Wild Hunt',
+        'background_image': 'https://media.rawg.io/media/games/witcher3.jpg',
+        'genres': [
+          {'name': 'Action'},
+          {'name': 'RPG'},
+        ],
+        'released': '2015-05-19',
+      };
+
+      final result = RawgGameResult.fromJson(json);
+
+      expect(result.title, 'The Witcher 3: Wild Hunt');
+      expect(result.imageUrl, 'https://media.rawg.io/media/games/witcher3.jpg');
+      expect(result.genres, ['Action', 'RPG']);
+      expect(result.releaseYear, 2015);
+    });
+
+    test('RawgGameResult.fromJson handles missing fields gracefully', () {
+      final json = <String, dynamic>{};
+
+      final result = RawgGameResult.fromJson(json);
+
+      expect(result.title, '');
+      expect(result.imageUrl, isNull);
+      expect(result.genres, isEmpty);
+      expect(result.releaseYear, isNull);
     });
   });
 }

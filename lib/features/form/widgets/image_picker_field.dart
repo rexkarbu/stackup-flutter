@@ -28,6 +28,16 @@ class _ImagePickerFieldState extends State<ImagePickerField> {
     _imagePath = widget.initialImagePath;
   }
 
+  @override
+  void didUpdateWidget(covariant ImagePickerField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialImagePath != oldWidget.initialImagePath) {
+      setState(() {
+        _imagePath = widget.initialImagePath;
+      });
+    }
+  }
+
   Future<void> _pickImage() async {
     try {
       setState(() => _isLoading = true);

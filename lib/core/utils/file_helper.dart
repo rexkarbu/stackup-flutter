@@ -21,6 +21,11 @@ class FileHelper {
     return savedFile.path;
   }
 
+  /// Menyalin File ke ApplicationDocumentsDirectory
+  static Future<String> saveCoverImage(File file) async {
+    return saveCoverImagePermanently(file.path);
+  }
+
   /// Menghapus file cover lokal jika file tersebut ada
   static Future<void> deleteCoverImage(String? filePath) async {
     if (filePath == null || filePath.isEmpty) return;
