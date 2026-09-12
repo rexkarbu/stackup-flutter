@@ -6,6 +6,7 @@ abstract class GameRepository {
     String? query,
     GameStatus? status,
     GamePlatform? platform,
+    String? genre,
     GameSort? sort,
   });
 

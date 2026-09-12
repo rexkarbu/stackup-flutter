@@ -126,9 +126,10 @@ Dokumen ini melacak seluruh fase pengembangan aplikasi **StackUp**, mulai dari i
 - [ ] **4.2 Multi-Language Support (i18n)**
   - [ ] Dukungan bilingual (Bahasa Indonesia & Bahasa Inggris).
   - [ ] Konfigurasi Flutter `flutter_localizations` & berkas `.arb`.
-- [ ] **4.3 Filter Lanjutan & Tagging Kustom**
-  - [ ] Filter berdasarkan genre spesifik di Backlog Screen.
-  - [ ] Filter berdasarkan rentang tahun penambahan atau rating.
+- [x] **4.3 Filter Lanjutan & Tagging Kustom**
+  - [x] Filter berdasarkan genre spesifik di FilterSheet Backlog Screen.
+  - [x] Ekstraksi daftar genre unik secara dinamis dari library game (`availableGenresProvider`).
+  - [x] Badge genre aktif dengan tombol hapus 1-tap di Backlog Screen.
 - [ ] **4.4 Play Store Release Preparation**
   - [ ] Konfigurasi Proguard / R8 rules untuk Isar database obfuscation.
   - [ ] Pembuatan Android App Bundle (`flutter build appbundle --release`).

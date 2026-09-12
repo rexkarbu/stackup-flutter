@@ -22,10 +22,12 @@ class FilterSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedPlatform = ref.watch(platformFilterProvider);
+    final selectedGenre = ref.watch(genreFilterProvider);
+    final availableGenres = ref.watch(availableGenresProvider);
     final selectedSort = ref.watch(sortOptionProvider);
 
     return SafeArea(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -59,6 +61,7 @@ class FilterSheet extends ConsumerWidget {
                 TextButton(
                   onPressed: () {
                     ref.read(platformFilterProvider.notifier).state = null;
+                    ref.read(genreFilterProvider.notifier).state = null;
                     ref.read(sortOptionProvider.notifier).state = GameSort.dateAddedDesc;
                   },
                   child: const Text(
@@ -123,6 +126,71 @@ class FilterSheet extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 24),
+
+            // Genre Filter Section
+            if (availableGenres.isNotEmpty) ...[
+              const Text(
+                'GENRE',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.8,
+                  color: AppColors.textMuted,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  ChoiceChip(
+                    label: const Text('Semua Genre'),
+                    selected: selectedGenre == null,
+                    onSelected: (selected) {
+                      if (selected) {
+                        ref.read(genreFilterProvider.notifier).state = null;
+                      }
+                    },
+                    selectedColor: AppColors.primary,
+                    backgroundColor: AppColors.card,
+                    labelStyle: TextStyle(
+                      color: selectedGenre == null
+                          ? Colors.white
+                          : AppColors.textSecondary,
+                      fontWeight: selectedGenre == null
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                      fontSize: 13,
+                    ),
+                  ),
+                  ...availableGenres.map((g) {
+                    final isSelected =
+                        selectedGenre?.toLowerCase() == g.toLowerCase();
+                    return ChoiceChip(
+                      label: Text(g),
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        ref.read(genreFilterProvider.notifier).state =
+                            selected ? g : null;
+                      },
+                      selectedColor:
+                          AppColors.primary.withValues(alpha: 0.3),
+                      backgroundColor: AppColors.card,
+                      labelStyle: TextStyle(
+                        color: isSelected
+                            ? Colors.white
+                            : AppColors.textSecondary,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.normal,
+                        fontSize: 13,
+                      ),
+                    );
+                  }),
+                ],
+              ),
+              const SizedBox(height: 24),
+            ],
 
             // Sort Section
             const Text(

@@ -202,4 +202,28 @@ void main() {
       expect(result.releaseYear, isNull);
     });
   });
+
+  group('Genre Filter Tests', () {
+    test('filters games by genre case-insensitively', () {
+      final game1 = BacklogGame()
+        ..title = 'Game 1'
+        ..genres = ['Action', 'RPG'];
+      final game2 = BacklogGame()
+        ..title = 'Game 2'
+        ..genres = ['Strategy', 'Puzzle'];
+      final game3 = BacklogGame()
+        ..title = 'Game 3'
+        ..genres = ['rpg', 'Indie'];
+
+      final allGames = [game1, game2, game3];
+      const targetGenre = 'rpg';
+
+      final filtered = allGames.where(
+        (g) => g.genres.any((item) => item.toLowerCase() == targetGenre.toLowerCase()),
+      ).toList();
+
+      expect(filtered.length, 2);
+      expect(filtered.map((g) => g.title), containsAll(['Game 1', 'Game 3']));
+    });
+  });
 }

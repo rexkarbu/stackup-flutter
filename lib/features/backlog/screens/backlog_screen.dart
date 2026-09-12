@@ -14,7 +14,10 @@ class BacklogScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedStatus = ref.watch(statusFilterProvider);
     final selectedPlatform = ref.watch(platformFilterProvider);
+    final selectedGenre = ref.watch(genreFilterProvider);
     final gamesAsync = ref.watch(filteredGamesStreamProvider);
+
+    final hasActiveFilter = selectedPlatform != null || selectedGenre != null;
 
     return Scaffold(
       body: SafeArea(
@@ -83,12 +86,12 @@ class BacklogScreen extends ConsumerWidget {
                             height: 48,
                             width: 48,
                             decoration: BoxDecoration(
-                              color: selectedPlatform != null
+                              color: hasActiveFilter
                                   ? AppColors.primary.withValues(alpha: 0.2)
                                   : AppColors.surface,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: selectedPlatform != null
+                                color: hasActiveFilter
                                     ? AppColors.primary
                                     : AppColors.cardBorder,
                               ),
@@ -96,7 +99,7 @@ class BacklogScreen extends ConsumerWidget {
                             child: IconButton(
                               icon: Icon(
                                 Icons.tune_rounded,
-                                color: selectedPlatform != null
+                                color: hasActiveFilter
                                     ? AppColors.primary
                                     : AppColors.textSecondary,
                                 size: 22,
@@ -143,6 +146,53 @@ class BacklogScreen extends ConsumerWidget {
                           ],
                         ),
                       ),
+
+                      // Active Genre Filter Badge
+                      if (selectedGenre != null) ...[
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: AppColors.primary.withValues(alpha: 0.4),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.tag_rounded,
+                                      size: 14, color: AppColors.primary),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'Genre: $selectedGenre',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.textPrimary,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  GestureDetector(
+                                    onTap: () {
+                                      ref.read(genreFilterProvider.notifier).state = null;
+                                    },
+                                    child: const Icon(
+                                      Icons.close_rounded,
+                                      size: 16,
+                                      color: AppColors.textMuted,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ],
                   ),
                 ),

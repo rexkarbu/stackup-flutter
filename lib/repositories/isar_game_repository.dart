@@ -14,6 +14,7 @@ class IsarGameRepository implements GameRepository {
     String? query,
     GameStatus? status,
     GamePlatform? platform,
+    String? genre,
     GameSort? sort,
   }) {
     return _isar.backlogGames.where().watch(fireImmediately: true).map((games) {
@@ -33,6 +34,14 @@ class IsarGameRepository implements GameRepository {
       if (query != null && query.trim().isNotEmpty) {
         final q = query.trim().toLowerCase();
         filtered = filtered.where((g) => g.title.toLowerCase().contains(q)).toList();
+      }
+
+      // Filter Genre
+      if (genre != null && genre.trim().isNotEmpty) {
+        final target = genre.trim().toLowerCase();
+        filtered = filtered.where(
+          (g) => g.genres.any((item) => item.toLowerCase() == target),
+        ).toList();
       }
 
       // Sorting
