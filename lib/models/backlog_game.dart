@@ -43,4 +43,51 @@ class BacklogGame {
   late DateTime dateAdded;
   DateTime? dateStarted;
   DateTime? dateCompleted;
+
+  Map<String, dynamic> toJson() => {
+        'title': title,
+        'platform': platform.name,
+        'genres': genres,
+        'status': status.name,
+        'priority': priority,
+        'rating': rating,
+        'hoursPlayed': hoursPlayed,
+        'purchasePrice': purchasePrice,
+        'notes': notes,
+        'dateAdded': dateAdded.toIso8601String(),
+        'dateStarted': dateStarted?.toIso8601String(),
+        'dateCompleted': dateCompleted?.toIso8601String(),
+      };
+
+  static BacklogGame fromJson(Map<String, dynamic> json) {
+    final game = BacklogGame()
+      ..title = json['title'] as String? ?? 'Untitled'
+      ..platform = GamePlatform.values.firstWhere(
+        (e) => e.name == json['platform'],
+        orElse: () => GamePlatform.other,
+      )
+      ..genres = (json['genres'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          []
+      ..status = GameStatus.values.firstWhere(
+        (e) => e.name == json['status'],
+        orElse: () => GameStatus.backlog,
+      )
+      ..priority = json['priority'] as int? ?? 0
+      ..rating = (json['rating'] as num?)?.toDouble()
+      ..hoursPlayed = (json['hoursPlayed'] as num?)?.toDouble() ?? 0.0
+      ..purchasePrice = (json['purchasePrice'] as num?)?.toDouble()
+      ..notes = json['notes'] as String?
+      ..dateAdded = json['dateAdded'] != null
+          ? DateTime.tryParse(json['dateAdded'] as String) ?? DateTime.now()
+          : DateTime.now()
+      ..dateStarted = json['dateStarted'] != null
+          ? DateTime.tryParse(json['dateStarted'] as String)
+          : null
+      ..dateCompleted = json['dateCompleted'] != null
+          ? DateTime.tryParse(json['dateCompleted'] as String)
+          : null;
+    return game;
+  }
 }

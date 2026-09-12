@@ -101,9 +101,9 @@ Dokumen ini melacak seluruh fase pengembangan aplikasi **StackUp**, mulai dari i
   - [x] Form input harga beli pada `GameFormScreen`.
   - [x] Kartu efisiensi biaya & badge indikator pada `GameDetailScreen` (< Rp 15k: *Sangat Worth It 💎*, Rp 15k - 50k: *Sepadan 👍*, > Rp 50k: *Perlu Dimainin Lagi ⏳*).
   - [x] Metrik "Total Investasi" & "Rata-rata / Jam" pada `StatsScreen`.
-- [ ] **3.2 Backup & Restore (Import / Export Data)**
-  - [ ] Fitur ekspor seluruh data library ke file `.json` atau `.csv`.
-  - [ ] Fitur impor file backup untuk pemulihan data atau migrasi perangkat.
+- [x] **3.2 Backup & Restore (Import / Export Data)**
+  - [x] Fitur ekspor seluruh data library ke file `.json` menggunakan JSON murni & native share sheet (`share_plus`).
+  - [x] Fitur impor file backup `.json` (`file_picker`) untuk pemulihan data lokal tanpa cloud.
   - [ ] Opsi menyertakan arsip gambar cover ke dalam file zip backup.
 - [ ] **3.3 Auto-fill Metadata Game via API**
   - [ ] Integrasi REST API (misal RAWG Video Games Database API atau IGDB API).

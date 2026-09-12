@@ -82,4 +82,91 @@ void main() {
       expect(game.costPerHour, 10000.0);
     });
   });
+
+  group('Backup & Serialization Tests', () {
+    test('toJson serializes all fields correctly', () {
+      final dateAdded = DateTime(2025, 1, 1, 10, 0);
+      final dateStarted = DateTime(2025, 1, 2, 14, 30);
+      final dateCompleted = DateTime(2025, 1, 10, 20, 0);
+
+      final game = BacklogGame()
+        ..title = 'The Witcher 3'
+        ..platform = GamePlatform.pc
+        ..genres = ['RPG', 'Open World']
+        ..status = GameStatus.completed
+        ..priority = 1
+        ..rating = 4.8
+        ..hoursPlayed = 85.5
+        ..purchasePrice = 250000
+        ..notes = 'Masterpiece RPG'
+        ..dateAdded = dateAdded
+        ..dateStarted = dateStarted
+        ..dateCompleted = dateCompleted;
+
+      final json = game.toJson();
+
+      expect(json['title'], 'The Witcher 3');
+      expect(json['platform'], 'pc');
+      expect(json['genres'], ['RPG', 'Open World']);
+      expect(json['status'], 'completed');
+      expect(json['priority'], 1);
+      expect(json['rating'], 4.8);
+      expect(json['hoursPlayed'], 85.5);
+      expect(json['purchasePrice'], 250000.0);
+      expect(json['notes'], 'Masterpiece RPG');
+      expect(json['dateAdded'], dateAdded.toIso8601String());
+      expect(json['dateStarted'], dateStarted.toIso8601String());
+      expect(json['dateCompleted'], dateCompleted.toIso8601String());
+    });
+
+    test('fromJson deserializes JSON map accurately', () {
+      final jsonMap = {
+        'title': 'Hades',
+        'platform': 'switch_',
+        'genres': ['Roguelike', 'Action'],
+        'status': 'playing',
+        'priority': 0,
+        'rating': 4.5,
+        'hoursPlayed': 42.0,
+        'purchasePrice': 150000.0,
+        'notes': 'Great soundtrack',
+        'dateAdded': '2025-02-01T12:00:00.000',
+        'dateStarted': '2025-02-02T15:00:00.000',
+        'dateCompleted': null,
+      };
+
+      final game = BacklogGame.fromJson(jsonMap);
+
+      expect(game.title, 'Hades');
+      expect(game.platform, GamePlatform.switch_);
+      expect(game.genres, ['Roguelike', 'Action']);
+      expect(game.status, GameStatus.playing);
+      expect(game.priority, 0);
+      expect(game.rating, 4.5);
+      expect(game.hoursPlayed, 42.0);
+      expect(game.purchasePrice, 150000.0);
+      expect(game.notes, 'Great soundtrack');
+      expect(game.dateAdded, DateTime.parse('2025-02-01T12:00:00.000'));
+      expect(game.dateStarted, DateTime.parse('2025-02-02T15:00:00.000'));
+      expect(game.dateCompleted, isNull);
+    });
+
+    test('fromJson handles fallback defaults when values are missing', () {
+      final jsonMap = <String, dynamic>{};
+
+      final game = BacklogGame.fromJson(jsonMap);
+
+      expect(game.title, 'Untitled');
+      expect(game.platform, GamePlatform.other);
+      expect(game.genres, isEmpty);
+      expect(game.status, GameStatus.backlog);
+      expect(game.priority, 0);
+      expect(game.hoursPlayed, 0.0);
+      expect(game.purchasePrice, isNull);
+      expect(game.rating, isNull);
+      expect(game.dateStarted, isNull);
+      expect(game.dateCompleted, isNull);
+      expect(game.dateAdded, isA<DateTime>());
+    });
+  });
 }
