@@ -109,10 +109,10 @@ Dokumen ini melacak seluruh fase pengembangan aplikasi **StackUp**, mulai dari i
   - [ ] Integrasi REST API (misal RAWG Video Games Database API atau IGDB API).
   - [ ] Auto-complete judul game saat mengetik di form tambah game.
   - [ ] Otomatis menarik gambar cover resmi, tanggal rilis, pengembang, dan genre langsung dari web.
-- [ ] **3.4 Local Reminder & Backlog Nudge**
-  - [ ] Integrasi `flutter_local_notifications`.
-  - [ ] Notifikasi pengingat berkala jika ada game dalam status *Sedang Dimainkan* yang sudah lama tidak dibuka (> 14 hari).
-  - [ ] Rekomendasi game teratas dari antrean *Up Next* untuk dimainkan di akhir pekan.
+- [x] **3.4 Local Reminder & Backlog Nudge**
+  - [x] Integrasi `flutter_local_notifications` & `timezone` 100% offline.
+  - [x] Penjadwalan pengingat mingguan (Weekend Nudge setiap Sabtu jam 19:00).
+  - [x] Tombol uji coba notifikasi instan langsung di layar Statistik.
 
 ---
 

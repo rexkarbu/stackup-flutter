@@ -119,3 +119,6 @@ final statsSummaryProvider = Provider<AsyncValue<GameStats>>((ref) {
     );
   });
 });
+
+final weekendReminderProvider = StateProvider<bool>((ref) => false);
+

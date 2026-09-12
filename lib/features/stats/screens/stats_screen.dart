@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/backup_helper.dart';
 import '../../../core/utils/formatters.dart';
+import '../../../core/utils/notification_helper.dart';
 import '../../../models/backlog_game.dart';
 import '../../../models/game_enums.dart';
 import '../../../providers/game_providers.dart';
@@ -156,6 +157,20 @@ class StatsScreen extends ConsumerWidget {
                   return _buildTopRatedItem(context, game);
                 }),
               ],
+
+              // Weekend Reminder Section
+              const SizedBox(height: 24),
+              const Text(
+                'PENGINGAT AKHIR PEKAN (WEEKEND NUDGE)',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.8,
+                  color: AppColors.textMuted,
+                ),
+              ),
+              const SizedBox(height: 12),
+              _buildReminderCard(context, ref),
 
               // Backup & Restore Section
               const SizedBox(height: 24),
@@ -517,6 +532,8 @@ class StatsScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 24),
+            _buildReminderCard(context, ref),
+            const SizedBox(height: 16),
             _buildBackupCard(context, ref),
           ],
         ),
@@ -661,6 +678,170 @@ class StatsScreen extends ConsumerWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Gagal mengimpor data: $errorMsg'),
+            backgroundColor: Colors.redAccent,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+
+  Widget _buildReminderCard(BuildContext context, WidgetRef ref) {
+    final isReminderEnabled = ref.watch(weekendReminderProvider);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.cardBorder),
+      ),
+      child: Column(
+        children: [
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            value: isReminderEnabled,
+            onChanged: (val) => _toggleReminder(context, ref, val),
+            activeThumbColor: AppColors.primary,
+            title: const Row(
+              children: [
+                Icon(Icons.notifications_active_rounded,
+                    color: Colors.amber, size: 20),
+                SizedBox(width: 8),
+                Text(
+                  'Pengingat Weekend',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+            subtitle: const Padding(
+              padding: EdgeInsets.only(top: 4),
+              child: Text(
+                'Pengingat setiap Sabtu jam 19:00 untuk melanjutkan backlog bermainmu.',
+                style: TextStyle(
+                  fontSize: 11.5,
+                  color: AppColors.textMuted,
+                ),
+              ),
+            ),
+          ),
+          const Divider(color: AppColors.cardBorder, height: 16),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton.icon(
+              onPressed: () => _testInstantNotification(context),
+              icon: const Icon(Icons.send_rounded,
+                  size: 15, color: AppColors.secondary),
+              label: const Text(
+                'Uji Coba Notifikasi',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.secondary,
+                ),
+              ),
+              style: TextButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _toggleReminder(
+      BuildContext context, WidgetRef ref, bool enabled) async {
+    final notifier = ref.read(weekendReminderProvider.notifier);
+
+    if (!enabled) {
+      notifier.state = false;
+      await NotificationHelper.cancelNudge();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Pengingat akhir pekan dinonaktifkan.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+      return;
+    }
+
+    final granted = await NotificationHelper.requestPermission();
+    if (!granted) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'Izin notifikasi tidak diberikan. Harap izinkan notifikasi di pengaturan.'),
+            backgroundColor: Colors.redAccent,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+      return;
+    }
+
+    final games = ref.read(allGamesStreamProvider).valueOrNull ?? [];
+    BacklogGame? targetGame;
+
+    try {
+      targetGame = games.firstWhere((g) => g.status == GameStatus.playing);
+    } catch (_) {
+      try {
+        final upNext = ref.read(upNextStreamProvider).valueOrNull ?? [];
+        if (upNext.isNotEmpty) {
+          targetGame = upNext.first;
+        } else if (games.isNotEmpty) {
+          targetGame = games.first;
+        }
+      } catch (_) {}
+    }
+
+    final gameTitle = targetGame?.title ?? 'game backlog-mu';
+    await NotificationHelper.scheduleWeeklyNudge(gameTitle: gameTitle);
+    notifier.state = true;
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Pengingat dijadwalkan setiap Sabtu jam 19:00!'),
+          backgroundColor: Color(0xFF10B981),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
+  Future<void> _testInstantNotification(BuildContext context) async {
+    try {
+      await NotificationHelper.requestPermission();
+      await NotificationHelper.showInstantNudge(
+        title: '🎮 Pengingat StackUp',
+        body: 'Weekend tiba! Waktunya lanjutin petualangan bermain game kamu.',
+      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content:
+                Text('Notifikasi percobaan telah dikirim! Cek panel notifikasi.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal mengirim notifikasi percobaan: $e'),
             backgroundColor: Colors.redAccent,
             behavior: SnackBarBehavior.floating,
           ),
