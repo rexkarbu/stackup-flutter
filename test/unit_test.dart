@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:stackup/l10n/app_localizations.dart';
 import 'package:stackup/core/network/rawg_service.dart';
 import 'package:stackup/core/utils/formatters.dart';
 import 'package:stackup/models/backlog_game.dart';
@@ -224,6 +225,14 @@ void main() {
 
       expect(filtered.length, 2);
       expect(filtered.map((g) => g.title), containsAll(['Game 1', 'Game 3']));
+    });
+  });
+
+  group('Locale & i18n Tests', () {
+    test('AppLocalizations supports id and en locales', () {
+      final supportedCodes =
+          AppLocalizations.supportedLocales.map((l) => l.languageCode).toList();
+      expect(supportedCodes, containsAll(['id', 'en']));
     });
   });
 }

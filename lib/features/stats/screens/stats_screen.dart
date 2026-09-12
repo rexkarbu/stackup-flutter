@@ -7,6 +7,7 @@ import '../../../core/utils/notification_helper.dart';
 import '../../../models/backlog_game.dart';
 import '../../../models/game_enums.dart';
 import '../../../providers/game_providers.dart';
+import '../../../providers/locale_provider.dart';
 import '../../../providers/stats_providers.dart';
 import '../../detail/screens/game_detail_screen.dart';
 import '../widgets/stat_card.dart';
@@ -157,6 +158,20 @@ class StatsScreen extends ConsumerWidget {
                   return _buildTopRatedItem(context, game);
                 }),
               ],
+
+              // Language Selector Section
+              const SizedBox(height: 24),
+              const Text(
+                'PENGATURAN BAHASA (APP LANGUAGE)',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.8,
+                  color: AppColors.textMuted,
+                ),
+              ),
+              const SizedBox(height: 12),
+              _buildLanguageCard(context, ref),
 
               // Weekend Reminder Section
               const SizedBox(height: 24),
@@ -532,6 +547,8 @@ class StatsScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 24),
+            _buildLanguageCard(context, ref),
+            const SizedBox(height: 16),
             _buildReminderCard(context, ref),
             const SizedBox(height: 16),
             _buildBackupCard(context, ref),
@@ -848,5 +865,70 @@ class StatsScreen extends ConsumerWidget {
         );
       }
     }
+  }
+
+  Widget _buildLanguageCard(BuildContext context, WidgetRef ref) {
+    final currentLocale = ref.watch(localeProvider);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.cardBorder),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.language_rounded, color: AppColors.secondary, size: 20),
+              SizedBox(width: 10),
+              Text(
+                'Bahasa Aplikasi',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ],
+          ),
+          SegmentedButton<String>(
+            segments: const [
+              ButtonSegment<String>(
+                value: 'id',
+                label: Text('🇮🇩 ID', style: TextStyle(fontSize: 12)),
+              ),
+              ButtonSegment<String>(
+                value: 'en',
+                label: Text('🇬🇧 EN', style: TextStyle(fontSize: 12)),
+              ),
+            ],
+            selected: {currentLocale.languageCode},
+            onSelectionChanged: (newSelection) {
+              if (newSelection.isNotEmpty) {
+                ref.read(localeProvider.notifier).state =
+                    Locale(newSelection.first);
+              }
+            },
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return AppColors.primary;
+                }
+                return AppColors.surface;
+              }),
+              foregroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return Colors.white;
+                }
+                return AppColors.textSecondary;
+              }),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

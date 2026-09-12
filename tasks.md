@@ -11,7 +11,7 @@ Dokumen ini melacak seluruh fase pengembangan aplikasi **StackUp**, mulai dari i
 | **Fase 1** | Foundation, Database & Core Architecture | ✅ **SELESAI** |
 | **Fase 2** | Fitur Utama MVP & UI/UX Layar | ✅ **SELESAI** |
 | **Fase 3** | Fitur Lanjutan & Produktivitas Gamer | ✅ **SELESAI** |
-| **Fase 4** | Integrasi Eksternal, Polish & Rilis | 🔄 **IN PROGRESS** |
+| **Fase 4** | Integrasi Eksternal, Polish & Rilis | ✅ **SELESAI (100% Completed)** |
 
 ---
 
@@ -123,9 +123,10 @@ Dokumen ini melacak seluruh fase pengembangan aplikasi **StackUp**, mulai dari i
   - [x] Desain dan generate aset icon 512x512 PNG bertema gamer dark (`assets/icon/app_icon.png`).
   - [x] Konfigurasi dan generate `flutter_launcher_icons` untuk seluruh resolusi Android.
   - [x] Konfigurasi native splash screen Android (termasuk Android 12+ splash API) via `flutter_native_splash`.
-- [ ] **4.2 Multi-Language Support (i18n)**
-  - [ ] Dukungan bilingual (Bahasa Indonesia & Bahasa Inggris).
-  - [ ] Konfigurasi Flutter `flutter_localizations` & berkas `.arb`.
+- [x] **4.2 Multi-Language Support (i18n)**
+  - [x] Dukungan bilingual (Bahasa Indonesia & Bahasa Inggris).
+  - [x] Konfigurasi Flutter `flutter_localizations`, `l10n.yaml` & berkas `.arb`.
+  - [x] UI selector bahasa di Layar Statistik dengan state management reaktif (`localeProvider`).
 - [x] **4.3 Filter Lanjutan & Tagging Kustom**
   - [x] Filter berdasarkan genre spesifik di FilterSheet Backlog Screen.
   - [x] Ekstraksi daftar genre unik secara dinamis dari library game (`availableGenresProvider`).
