@@ -10,6 +10,11 @@
   <img src="https://img.shields.io/badge/Platform-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android" />
   <img src="https://img.shields.io/badge/Database-Isar%20v3-FF6F00?style=for-the-badge" alt="Isar Database" />
   <img src="https://img.shields.io/badge/State-Riverpod%202.5-blueviolet?style=for-the-badge" alt="Riverpod" />
+  <a href="https://github.com/rexkarbu/stackup-flutter/releases/latest"><img src="https://img.shields.io/github/v/release/rexkarbu/stackup-flutter?style=for-the-badge&color=2ea44f&label=Release" alt="Latest Release" /></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/rexkarbu/stackup-flutter/releases/download/v1.0.0/app-release.apk"><b>📥 Download Release APK (v1.0.0)</b></a>
 </p>
 
 ---
