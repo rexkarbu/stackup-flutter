@@ -20,6 +20,7 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
 
   late final TextEditingController _titleController;
   late final TextEditingController _hoursController;
+  late final TextEditingController _priceController;
   late final TextEditingController _notesController;
   late final TextEditingController _genreInputController;
 
@@ -56,6 +57,9 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
               : g.hoursPlayed.toString())
           : '0',
     );
+    _priceController = TextEditingController(
+      text: g?.purchasePrice != null ? g!.purchasePrice!.toInt().toString() : '',
+    );
     _notesController = TextEditingController(text: g?.notes ?? '');
     _genreInputController = TextEditingController();
 
@@ -69,6 +73,7 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
   void dispose() {
     _titleController.dispose();
     _hoursController.dispose();
+    _priceController.dispose();
     _notesController.dispose();
     _genreInputController.dispose();
     super.dispose();
@@ -97,6 +102,9 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
 
     try {
       final hours = double.tryParse(_hoursController.text.trim()) ?? 0.0;
+      final priceClean =
+          _priceController.text.replaceAll(RegExp(r'[^0-9]'), '');
+      final price = priceClean.isNotEmpty ? double.tryParse(priceClean) : null;
       final repo = ref.read(gameRepositoryProvider);
 
       if (widget.game == null) {
@@ -107,6 +115,7 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
           ..status = _status
           ..genres = _genres
           ..hoursPlayed = hours
+          ..purchasePrice = price
           ..notes = _notesController.text.trim().isEmpty
               ? null
               : _notesController.text.trim()
@@ -134,6 +143,7 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
         g.platform = _platform;
         g.genres = _genres;
         g.hoursPlayed = hours;
+        g.purchasePrice = price;
         g.notes = _notesController.text.trim().isEmpty
             ? null
             : _notesController.text.trim();
@@ -418,6 +428,31 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
                   hintText: '0',
                   suffixText: 'Jam',
                   prefixIcon: Icon(Icons.schedule_rounded,
+                      color: AppColors.textMuted, size: 20),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Purchase Price Field
+              const Text(
+                'HARGA BELI (OPSIONAL)',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.8,
+                  color: AppColors.textMuted,
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _priceController,
+                keyboardType: TextInputType.number,
+                style: const TextStyle(color: AppColors.textPrimary),
+                decoration: const InputDecoration(
+                  labelText: 'Harga Beli (Rp)',
+                  prefixText: 'Rp ',
+                  hintText: 'Kosongkan jika gratis / langganan',
+                  prefixIcon: Icon(Icons.payments_outlined,
                       color: AppColors.textMuted, size: 20),
                 ),
               ),

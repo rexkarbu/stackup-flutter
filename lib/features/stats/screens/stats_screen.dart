@@ -54,7 +54,7 @@ class StatsScreen extends ConsumerWidget {
           return ListView(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 80),
             children: [
-              // Summary 3-cards row
+              // Summary 2-cards row
               Row(
                 children: [
                   Expanded(
@@ -74,6 +74,32 @@ class StatsScreen extends ConsumerWidget {
                       icon: Icons.timer_outlined,
                       iconColor: AppColors.secondary,
                       subtitle: 'Akumulatif',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+
+              // Investment & Cost-per-Hour Row
+              Row(
+                children: [
+                  Expanded(
+                    child: StatCard(
+                      title: 'TOTAL INVESTASI',
+                      value: Formatters.formatCurrency(stats.totalSpent),
+                      icon: Icons.payments_outlined,
+                      iconColor: const Color(0xFF10B981),
+                      subtitle: 'Biaya pembelian game',
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: StatCard(
+                      title: 'RATA-RATA / JAM',
+                      value: Formatters.formatCostPerHour(stats.averageCostPerHour),
+                      icon: Icons.savings_outlined,
+                      iconColor: Colors.amber,
+                      subtitle: 'Efisiensi bermain',
                     ),
                   ),
                 ],

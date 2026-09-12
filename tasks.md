@@ -95,10 +95,12 @@ Dokumen ini melacak seluruh fase pengembangan aplikasi **StackUp**, mulai dari i
 ## Fase 3: Fitur Lanjutan & Produktivitas Gamer (Phase 2 / Next Sprint)
 > **Fokus**: Memberikan nilai tambah bagi gamer yang ingin mengelola keuangan bermain, otomatisasi metadata, dan backup data.
 
-- [ ] **3.1 Cost-per-Hour Tracker**
-  - [ ] Tambahkan field `purchasePrice` (nullable double) pada entitas `BacklogGame`.
-  - [ ] Hitung metrik efisiensi biaya: `Cost per Hour = purchasePrice / hoursPlayed`.
-  - [ ] Indikator visual "Worth It Index" pada kartu game dan detail screen (misal: `< Rp 10.000 / jam` = Sangat Worth It).
+- [x] **3.1 Cost-per-Hour Tracker**
+  - [x] Tambahkan field `purchasePrice` (nullable double) dan getter `costPerHour` pada entitas `BacklogGame`.
+  - [x] Formatter mata uang Rupiah & biaya per jam (`formatCurrency` & `formatCostPerHour`).
+  - [x] Form input harga beli pada `GameFormScreen`.
+  - [x] Kartu efisiensi biaya & badge indikator pada `GameDetailScreen` (< Rp 15k: *Sangat Worth It 💎*, Rp 15k - 50k: *Sepadan 👍*, > Rp 50k: *Perlu Dimainin Lagi ⏳*).
+  - [x] Metrik "Total Investasi" & "Rata-rata / Jam" pada `StatsScreen`.
 - [ ] **3.2 Backup & Restore (Import / Export Data)**
   - [ ] Fitur ekspor seluruh data library ke file `.json` atau `.csv`.
   - [ ] Fitur impor file backup untuk pemulihan data atau migrasi perangkat.

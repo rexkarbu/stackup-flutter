@@ -13,6 +13,8 @@ class GameStats {
   final int droppedCount;
   final Map<GamePlatform, int> platformDistribution;
   final List<BacklogGame> topRatedGames;
+  final double totalSpent;
+  final double? averageCostPerHour;
 
   const GameStats({
     required this.totalGames,
@@ -24,6 +26,8 @@ class GameStats {
     required this.droppedCount,
     required this.platformDistribution,
     required this.topRatedGames,
+    required this.totalSpent,
+    required this.averageCostPerHour,
   });
 
   factory GameStats.empty() {
@@ -37,6 +41,8 @@ class GameStats {
       droppedCount: 0,
       platformDistribution: {},
       topRatedGames: [],
+      totalSpent: 0.0,
+      averageCostPerHour: null,
     );
   }
 }
@@ -51,6 +57,7 @@ final statsSummaryProvider = Provider<AsyncValue<GameStats>>((ref) {
 
     final totalGames = games.length;
     double totalHours = 0.0;
+    double totalSpent = 0.0;
     int backlogCount = 0;
     int playingCount = 0;
     int completedCount = 0;
@@ -60,6 +67,9 @@ final statsSummaryProvider = Provider<AsyncValue<GameStats>>((ref) {
 
     for (final game in games) {
       totalHours += game.hoursPlayed;
+      if (game.purchasePrice != null && game.purchasePrice! > 0) {
+        totalSpent += game.purchasePrice!;
+      }
 
       switch (game.status) {
         case GameStatus.backlog:
@@ -83,6 +93,8 @@ final statsSummaryProvider = Provider<AsyncValue<GameStats>>((ref) {
     }
 
     final completionRate = totalGames > 0 ? (completedCount / totalGames) * 100 : 0.0;
+    final averageCostPerHour =
+        (totalHours > 0 && totalSpent > 0) ? (totalSpent / totalHours) : null;
 
     // Urutkan top rated games descending
     ratedList.sort((a, b) => (b.rating ?? 0.0).compareTo(a.rating ?? 0.0));
@@ -102,6 +114,8 @@ final statsSummaryProvider = Provider<AsyncValue<GameStats>>((ref) {
       droppedCount: droppedCount,
       platformDistribution: sortedPlatformMap,
       topRatedGames: ratedList.take(5).toList(),
+      totalSpent: totalSpent,
+      averageCostPerHour: averageCostPerHour,
     );
   });
 });

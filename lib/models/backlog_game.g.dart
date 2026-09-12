@@ -17,65 +17,75 @@ const BacklogGameSchema = CollectionSchema(
   name: r'BacklogGame',
   id: -7566227327644713608,
   properties: {
-    r'coverPath': PropertySchema(
+    r'costPerHour': PropertySchema(
       id: 0,
+      name: r'costPerHour',
+      type: IsarType.double,
+    ),
+    r'coverPath': PropertySchema(
+      id: 1,
       name: r'coverPath',
       type: IsarType.string,
     ),
     r'dateAdded': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'dateAdded',
       type: IsarType.dateTime,
     ),
     r'dateCompleted': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'dateCompleted',
       type: IsarType.dateTime,
     ),
     r'dateStarted': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'dateStarted',
       type: IsarType.dateTime,
     ),
     r'genres': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'genres',
       type: IsarType.stringList,
     ),
     r'hoursPlayed': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'hoursPlayed',
       type: IsarType.double,
     ),
     r'notes': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'notes',
       type: IsarType.string,
     ),
     r'platform': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'platform',
       type: IsarType.byte,
       enumMap: _BacklogGameplatformEnumValueMap,
     ),
     r'priority': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'priority',
       type: IsarType.long,
     ),
+    r'purchasePrice': PropertySchema(
+      id: 10,
+      name: r'purchasePrice',
+      type: IsarType.double,
+    ),
     r'rating': PropertySchema(
-      id: 9,
+      id: 11,
       name: r'rating',
       type: IsarType.double,
     ),
     r'status': PropertySchema(
-      id: 10,
+      id: 12,
       name: r'status',
       type: IsarType.byte,
       enumMap: _BacklogGamestatusEnumValueMap,
     ),
     r'title': PropertySchema(
-      id: 11,
+      id: 13,
       name: r'title',
       type: IsarType.string,
     )
@@ -129,18 +139,20 @@ void _backlogGameSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.coverPath);
-  writer.writeDateTime(offsets[1], object.dateAdded);
-  writer.writeDateTime(offsets[2], object.dateCompleted);
-  writer.writeDateTime(offsets[3], object.dateStarted);
-  writer.writeStringList(offsets[4], object.genres);
-  writer.writeDouble(offsets[5], object.hoursPlayed);
-  writer.writeString(offsets[6], object.notes);
-  writer.writeByte(offsets[7], object.platform.index);
-  writer.writeLong(offsets[8], object.priority);
-  writer.writeDouble(offsets[9], object.rating);
-  writer.writeByte(offsets[10], object.status.index);
-  writer.writeString(offsets[11], object.title);
+  writer.writeDouble(offsets[0], object.costPerHour);
+  writer.writeString(offsets[1], object.coverPath);
+  writer.writeDateTime(offsets[2], object.dateAdded);
+  writer.writeDateTime(offsets[3], object.dateCompleted);
+  writer.writeDateTime(offsets[4], object.dateStarted);
+  writer.writeStringList(offsets[5], object.genres);
+  writer.writeDouble(offsets[6], object.hoursPlayed);
+  writer.writeString(offsets[7], object.notes);
+  writer.writeByte(offsets[8], object.platform.index);
+  writer.writeLong(offsets[9], object.priority);
+  writer.writeDouble(offsets[10], object.purchasePrice);
+  writer.writeDouble(offsets[11], object.rating);
+  writer.writeByte(offsets[12], object.status.index);
+  writer.writeString(offsets[13], object.title);
 }
 
 BacklogGame _backlogGameDeserialize(
@@ -150,23 +162,24 @@ BacklogGame _backlogGameDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = BacklogGame();
-  object.coverPath = reader.readStringOrNull(offsets[0]);
-  object.dateAdded = reader.readDateTime(offsets[1]);
-  object.dateCompleted = reader.readDateTimeOrNull(offsets[2]);
-  object.dateStarted = reader.readDateTimeOrNull(offsets[3]);
-  object.genres = reader.readStringList(offsets[4]) ?? [];
-  object.hoursPlayed = reader.readDouble(offsets[5]);
+  object.coverPath = reader.readStringOrNull(offsets[1]);
+  object.dateAdded = reader.readDateTime(offsets[2]);
+  object.dateCompleted = reader.readDateTimeOrNull(offsets[3]);
+  object.dateStarted = reader.readDateTimeOrNull(offsets[4]);
+  object.genres = reader.readStringList(offsets[5]) ?? [];
+  object.hoursPlayed = reader.readDouble(offsets[6]);
   object.id = id;
-  object.notes = reader.readStringOrNull(offsets[6]);
+  object.notes = reader.readStringOrNull(offsets[7]);
   object.platform =
-      _BacklogGameplatformValueEnumMap[reader.readByteOrNull(offsets[7])] ??
+      _BacklogGameplatformValueEnumMap[reader.readByteOrNull(offsets[8])] ??
           GamePlatform.pc;
-  object.priority = reader.readLong(offsets[8]);
-  object.rating = reader.readDoubleOrNull(offsets[9]);
+  object.priority = reader.readLong(offsets[9]);
+  object.purchasePrice = reader.readDoubleOrNull(offsets[10]);
+  object.rating = reader.readDoubleOrNull(offsets[11]);
   object.status =
-      _BacklogGamestatusValueEnumMap[reader.readByteOrNull(offsets[10])] ??
+      _BacklogGamestatusValueEnumMap[reader.readByteOrNull(offsets[12])] ??
           GameStatus.backlog;
-  object.title = reader.readString(offsets[11]);
+  object.title = reader.readString(offsets[13]);
   return object;
 }
 
@@ -178,30 +191,34 @@ P _backlogGameDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 1:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 2:
-      return (reader.readDateTimeOrNull(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 3:
       return (reader.readDateTimeOrNull(offset)) as P;
     case 4:
-      return (reader.readStringList(offset) ?? []) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 5:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readStringList(offset) ?? []) as P;
     case 6:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 7:
+      return (reader.readStringOrNull(offset)) as P;
+    case 8:
       return (_BacklogGameplatformValueEnumMap[reader.readByteOrNull(offset)] ??
           GamePlatform.pc) as P;
-    case 8:
-      return (reader.readLong(offset)) as P;
     case 9:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 10:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 11:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 12:
       return (_BacklogGamestatusValueEnumMap[reader.readByteOrNull(offset)] ??
           GameStatus.backlog) as P;
-    case 11:
+    case 13:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -332,6 +349,90 @@ extension BacklogGameQueryWhere
 
 extension BacklogGameQueryFilter
     on QueryBuilder<BacklogGame, BacklogGame, QFilterCondition> {
+  QueryBuilder<BacklogGame, BacklogGame, QAfterFilterCondition>
+      costPerHourIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'costPerHour',
+      ));
+    });
+  }
+
+  QueryBuilder<BacklogGame, BacklogGame, QAfterFilterCondition>
+      costPerHourIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'costPerHour',
+      ));
+    });
+  }
+
+  QueryBuilder<BacklogGame, BacklogGame, QAfterFilterCondition>
+      costPerHourEqualTo(
+    double? value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'costPerHour',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<BacklogGame, BacklogGame, QAfterFilterCondition>
+      costPerHourGreaterThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'costPerHour',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<BacklogGame, BacklogGame, QAfterFilterCondition>
+      costPerHourLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'costPerHour',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<BacklogGame, BacklogGame, QAfterFilterCondition>
+      costPerHourBetween(
+    double? lower,
+    double? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'costPerHour',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
   QueryBuilder<BacklogGame, BacklogGame, QAfterFilterCondition>
       coverPathIsNull() {
     return QueryBuilder.apply(this, (query) {
@@ -1293,6 +1394,90 @@ extension BacklogGameQueryFilter
     });
   }
 
+  QueryBuilder<BacklogGame, BacklogGame, QAfterFilterCondition>
+      purchasePriceIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'purchasePrice',
+      ));
+    });
+  }
+
+  QueryBuilder<BacklogGame, BacklogGame, QAfterFilterCondition>
+      purchasePriceIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'purchasePrice',
+      ));
+    });
+  }
+
+  QueryBuilder<BacklogGame, BacklogGame, QAfterFilterCondition>
+      purchasePriceEqualTo(
+    double? value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'purchasePrice',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<BacklogGame, BacklogGame, QAfterFilterCondition>
+      purchasePriceGreaterThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'purchasePrice',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<BacklogGame, BacklogGame, QAfterFilterCondition>
+      purchasePriceLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'purchasePrice',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<BacklogGame, BacklogGame, QAfterFilterCondition>
+      purchasePriceBetween(
+    double? lower,
+    double? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'purchasePrice',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
   QueryBuilder<BacklogGame, BacklogGame, QAfterFilterCondition> ratingIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1568,6 +1753,18 @@ extension BacklogGameQueryLinks
 
 extension BacklogGameQuerySortBy
     on QueryBuilder<BacklogGame, BacklogGame, QSortBy> {
+  QueryBuilder<BacklogGame, BacklogGame, QAfterSortBy> sortByCostPerHour() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'costPerHour', Sort.asc);
+    });
+  }
+
+  QueryBuilder<BacklogGame, BacklogGame, QAfterSortBy> sortByCostPerHourDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'costPerHour', Sort.desc);
+    });
+  }
+
   QueryBuilder<BacklogGame, BacklogGame, QAfterSortBy> sortByCoverPath() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'coverPath', Sort.asc);
@@ -1665,6 +1862,19 @@ extension BacklogGameQuerySortBy
     });
   }
 
+  QueryBuilder<BacklogGame, BacklogGame, QAfterSortBy> sortByPurchasePrice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'purchasePrice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<BacklogGame, BacklogGame, QAfterSortBy>
+      sortByPurchasePriceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'purchasePrice', Sort.desc);
+    });
+  }
+
   QueryBuilder<BacklogGame, BacklogGame, QAfterSortBy> sortByRating() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rating', Sort.asc);
@@ -1704,6 +1914,18 @@ extension BacklogGameQuerySortBy
 
 extension BacklogGameQuerySortThenBy
     on QueryBuilder<BacklogGame, BacklogGame, QSortThenBy> {
+  QueryBuilder<BacklogGame, BacklogGame, QAfterSortBy> thenByCostPerHour() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'costPerHour', Sort.asc);
+    });
+  }
+
+  QueryBuilder<BacklogGame, BacklogGame, QAfterSortBy> thenByCostPerHourDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'costPerHour', Sort.desc);
+    });
+  }
+
   QueryBuilder<BacklogGame, BacklogGame, QAfterSortBy> thenByCoverPath() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'coverPath', Sort.asc);
@@ -1813,6 +2035,19 @@ extension BacklogGameQuerySortThenBy
     });
   }
 
+  QueryBuilder<BacklogGame, BacklogGame, QAfterSortBy> thenByPurchasePrice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'purchasePrice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<BacklogGame, BacklogGame, QAfterSortBy>
+      thenByPurchasePriceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'purchasePrice', Sort.desc);
+    });
+  }
+
   QueryBuilder<BacklogGame, BacklogGame, QAfterSortBy> thenByRating() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rating', Sort.asc);
@@ -1852,6 +2087,12 @@ extension BacklogGameQuerySortThenBy
 
 extension BacklogGameQueryWhereDistinct
     on QueryBuilder<BacklogGame, BacklogGame, QDistinct> {
+  QueryBuilder<BacklogGame, BacklogGame, QDistinct> distinctByCostPerHour() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'costPerHour');
+    });
+  }
+
   QueryBuilder<BacklogGame, BacklogGame, QDistinct> distinctByCoverPath(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1908,6 +2149,12 @@ extension BacklogGameQueryWhereDistinct
     });
   }
 
+  QueryBuilder<BacklogGame, BacklogGame, QDistinct> distinctByPurchasePrice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'purchasePrice');
+    });
+  }
+
   QueryBuilder<BacklogGame, BacklogGame, QDistinct> distinctByRating() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'rating');
@@ -1933,6 +2180,12 @@ extension BacklogGameQueryProperty
   QueryBuilder<BacklogGame, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<BacklogGame, double?, QQueryOperations> costPerHourProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'costPerHour');
     });
   }
 
@@ -1988,6 +2241,12 @@ extension BacklogGameQueryProperty
   QueryBuilder<BacklogGame, int, QQueryOperations> priorityProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'priority');
+    });
+  }
+
+  QueryBuilder<BacklogGame, double?, QQueryOperations> purchasePriceProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'purchasePrice');
     });
   }
 

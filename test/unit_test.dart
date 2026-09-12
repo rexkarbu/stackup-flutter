@@ -38,6 +38,17 @@ void main() {
     test('formatDate handles null gracefully', () {
       expect(Formatters.formatDate(null), '-');
     });
+
+    test('formatCurrency formats Rupiah correctly', () {
+      expect(Formatters.formatCurrency(null), 'Gratis / N/A');
+      expect(Formatters.formatCurrency(0), 'Gratis / N/A');
+      expect(Formatters.formatCurrency(300000), 'Rp 300.000');
+    });
+
+    test('formatCostPerHour formats correctly', () {
+      expect(Formatters.formatCostPerHour(null), '-');
+      expect(Formatters.formatCostPerHour(10000), 'Rp 10.000 / jam');
+    });
   });
 
   group('BacklogGame Entity Tests', () {
@@ -53,8 +64,22 @@ void main() {
       expect(game.status, GameStatus.backlog);
       expect(game.priority, 0);
       expect(game.hoursPlayed, 0.0);
+      expect(game.purchasePrice, isNull);
+      expect(game.costPerHour, isNull);
       expect(game.rating, isNull);
       expect(game.genres, isEmpty);
+    });
+
+    test('costPerHour getter calculates correctly', () {
+      final game = BacklogGame()
+        ..title = 'Cyberpunk 2077'
+        ..platform = GamePlatform.pc
+        ..status = GameStatus.playing
+        ..purchasePrice = 300000
+        ..hoursPlayed = 30
+        ..dateAdded = DateTime(2025, 1, 1);
+
+      expect(game.costPerHour, 10000.0);
     });
   });
 }

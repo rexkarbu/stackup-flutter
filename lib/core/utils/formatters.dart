@@ -33,4 +33,18 @@ class Formatters {
     }
     return rating.toStringAsFixed(1);
   }
+
+  /// Format mata uang Rupiah
+  static String formatCurrency(double? amount) {
+    if (amount == null || amount <= 0) return 'Gratis / N/A';
+    final formatter = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
+    return formatter.format(amount);
+  }
+
+  /// Format biaya per jam bermain
+  static String formatCostPerHour(double? cph) {
+    if (cph == null) return '-';
+    final formatter = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
+    return '${formatter.format(cph)} / jam';
+  }
 }

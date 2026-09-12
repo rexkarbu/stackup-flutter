@@ -29,6 +29,15 @@ class BacklogGame {
   // Jam bermain (akumulatif, misal: 14.5 jam)
   double hoursPlayed = 0.0;
 
+  // Harga beli dalam Rupiah (nullable / opsional)
+  double? purchasePrice;
+
+  // Hitung biaya per jam bermain (getter)
+  double? get costPerHour {
+    if (purchasePrice == null || purchasePrice! <= 0 || hoursPlayed <= 0) return null;
+    return purchasePrice! / hoursPlayed;
+  }
+
   String? notes;
 
   late DateTime dateAdded;

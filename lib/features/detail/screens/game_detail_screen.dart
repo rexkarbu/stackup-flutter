@@ -245,6 +245,10 @@ class GameDetailScreen extends ConsumerWidget {
 
                   // Hours Played Card
                   _buildHoursPlayedCard(context, ref, game),
+                  const SizedBox(height: 16),
+
+                  // Cost-per-Hour Card
+                  _buildCostPerHourCard(game),
                   const SizedBox(height: 20),
 
                   // Rating Section (if Completed)
@@ -411,6 +415,135 @@ class GameDetailScreen extends ConsumerWidget {
             },
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCostPerHourCard(BacklogGame game) {
+    final cph = game.costPerHour;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.cardBorder),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.savings_outlined,
+                        color: AppColors.primary, size: 20),
+                  ),
+                  const SizedBox(width: 10),
+                  const Text(
+                    'EFISIENSI BIAYA (COST / JAM)',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.8,
+                      color: AppColors.textMuted,
+                    ),
+                  ),
+                ],
+              ),
+              if (cph != null) _buildEfficiencyBadge(cph),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Harga Beli',
+                      style: TextStyle(fontSize: 11.5, color: AppColors.textMuted),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      Formatters.formatCurrency(game.purchasePrice),
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(width: 1, height: 32, color: AppColors.cardBorder),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Nilai per Jam',
+                      style: TextStyle(fontSize: 11.5, color: AppColors.textMuted),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      Formatters.formatCostPerHour(cph),
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: cph != null
+                            ? AppColors.secondary
+                            : AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEfficiencyBadge(double cph) {
+    final Color badgeColor;
+    final String label;
+
+    if (cph < 15000) {
+      badgeColor = const Color(0xFF10B981); // Emerald
+      label = 'Sangat Worth It 💎';
+    } else if (cph <= 50000) {
+      badgeColor = const Color(0xFF38BDF8); // Sky blue
+      label = 'Sepadan 👍';
+    } else {
+      badgeColor = const Color(0xFFF59E0B); // Amber
+      label = 'Perlu Dimainin Lagi ⏳';
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+      decoration: BoxDecoration(
+        color: badgeColor.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: badgeColor.withValues(alpha: 0.4)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+          color: badgeColor,
+        ),
       ),
     );
   }
