@@ -10,8 +10,8 @@ Dokumen ini melacak seluruh fase pengembangan aplikasi **StackUp**, mulai dari i
 | :--- | :--- | :--- |
 | **Fase 1** | Foundation, Database & Core Architecture | ✅ **SELESAI** |
 | **Fase 2** | Fitur Utama MVP & UI/UX Layar | ✅ **SELESAI** |
-| **Fase 3** | Fitur Lanjutan & Produktivitas Gamer | ⏳ **TERENCANA (Next Sprint)** |
-| **Fase 4** | Integrasi Eksternal, Polish & Rilis | ⏳ **TERENCANA** |
+| **Fase 3** | Fitur Lanjutan & Produktivitas Gamer | ✅ **SELESAI** |
+| **Fase 4** | Integrasi Eksternal, Polish & Rilis | 🔄 **IN PROGRESS** |
 
 ---
 
@@ -119,10 +119,10 @@ Dokumen ini melacak seluruh fase pengembangan aplikasi **StackUp**, mulai dari i
 ## Fase 4: Polish, Platform & Production Readiness
 > **Fokus**: Menyiapkan aplikasi untuk distribusi publik di Google Play Store dan pengalaman pengguna maksimal.
 
-- [ ] **4.1 Custom App Icon & Splash Screen**
-  - [ ] Desain ikon aplikasi resmi StackUp (vektor logo bertema tumpukan kaset/stik game).
-  - [ ] Konfigurasi `flutter_launcher_icons` untuk icon Android (adaptif & legacy).
-  - [ ] Konfigurasi native splash screen menggunakan `flutter_native_splash`.
+- [x] **4.1 Custom App Icon & Splash Screen**
+  - [x] Desain dan generate aset icon 512x512 PNG bertema gamer dark (`assets/icon/app_icon.png`).
+  - [x] Konfigurasi dan generate `flutter_launcher_icons` untuk seluruh resolusi Android.
+  - [x] Konfigurasi native splash screen Android (termasuk Android 12+ splash API) via `flutter_native_splash`.
 - [ ] **4.2 Multi-Language Support (i18n)**
   - [ ] Dukungan bilingual (Bahasa Indonesia & Bahasa Inggris).
   - [ ] Konfigurasi Flutter `flutter_localizations` & berkas `.arb`.
