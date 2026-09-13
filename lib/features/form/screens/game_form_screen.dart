@@ -230,6 +230,16 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
                         ),
                       ),
                       IconButton(
+                        icon: const Icon(Icons.key,
+                            size: 18, color: AppColors.textMuted),
+                        tooltip: 'Pengaturan API Key',
+                        onPressed: () async {
+                          Navigator.of(sheetContext).pop();
+                          final updated = await _showApiKeyDialog();
+                          if (updated) _searchRawgMetadata();
+                        },
+                      ),
+                      IconButton(
                         icon: const Icon(Icons.close,
                             size: 18, color: AppColors.textMuted),
                         onPressed: () => Navigator.of(sheetContext).pop(),

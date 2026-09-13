@@ -36,8 +36,8 @@ class RawgGameResult {
 }
 
 class RawgService {
-  // Pengguna bisa mengganti API key default di sini atau lewat dialog pengaturan
-  static String apiKey = '';
+  // Default API Key RAWG (bisa diubah manual lewat UI jika diperlukan)
+  static String apiKey = 'f0e632a31cb949648552c2ad23b77767';
 
   /// Cari game berdasarkan query (maksimal 5 hasil teratas)
   static Future<List<RawgGameResult>> search(String query) async {
