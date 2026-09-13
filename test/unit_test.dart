@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stackup/l10n/app_localizations.dart';
 import 'package:stackup/core/network/rawg_service.dart';
@@ -50,6 +51,34 @@ void main() {
     test('formatCostPerHour formats correctly', () {
       expect(Formatters.formatCostPerHour(null), '-');
       expect(Formatters.formatCostPerHour(10000), 'Rp 10.000 / jam');
+    });
+
+    test('formatNumber formats thousands with dot separator', () {
+      expect(Formatters.formatNumber(null), '');
+      expect(Formatters.formatNumber(0), '');
+      expect(Formatters.formatNumber(120000), '120.000');
+      expect(Formatters.formatNumber(1500000), '1.500.000');
+    });
+
+    test('ThousandsSeparatorInputFormatter formats user input live with dots', () {
+      final formatter = ThousandsSeparatorInputFormatter();
+      final result1 = formatter.formatEditUpdate(
+        const TextEditingValue(),
+        const TextEditingValue(
+          text: '120000',
+          selection: TextSelection.collapsed(offset: 6),
+        ),
+      );
+      expect(result1.text, '120.000');
+
+      final result2 = formatter.formatEditUpdate(
+        result1,
+        const TextEditingValue(
+          text: '1200000',
+          selection: TextSelection.collapsed(offset: 7),
+        ),
+      );
+      expect(result2.text, '1.200.000');
     });
   });
 
@@ -201,6 +230,35 @@ void main() {
       expect(result.imageUrl, isNull);
       expect(result.genres, isEmpty);
       expect(result.releaseYear, isNull);
+    });
+
+    test('RawgGameResult.fromJson enriches genres with tags and excludes unwanted tags', () {
+      final json = {
+        'name': 'Persona 4 Golden',
+        'background_image': 'https://media.rawg.io/media/games/p4g.jpg',
+        'genres': [
+          {'name': 'RPG'},
+        ],
+        'tags': [
+          {'name': 'Singleplayer', 'language': 'eng'},
+          {'name': 'Steam Achievements', 'language': 'eng'},
+          {'name': 'Full controller support', 'language': 'eng'},
+          {'name': 'Story Rich', 'language': 'eng'},
+          {'name': 'Anime', 'language': 'eng'},
+          {'name': 'Violent', 'language': 'eng'},
+          {'name': 'Mystery', 'language': 'eng'},
+          {'name': 'JRPG', 'language': 'eng'},
+          {'name': 'Ролевая игра', 'language': 'rus'},
+        ],
+      };
+
+      final result = RawgGameResult.fromJson(json);
+
+      expect(result.genres, containsAll(['RPG', 'Story Rich', 'Anime', 'Mystery', 'JRPG']));
+      expect(result.genres, isNot(contains('Steam Achievements')));
+      expect(result.genres, isNot(contains('Violent')));
+      expect(result.genres, isNot(contains('Singleplayer')));
+      expect(result.genres, isNot(contains('Ролевая игра')));
     });
   });
 

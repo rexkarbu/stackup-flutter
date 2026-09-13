@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/rawg_service.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../models/backlog_game.dart';
 import '../../../models/game_enums.dart';
 import '../../../providers/game_providers.dart';
@@ -59,7 +60,9 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
           : '0',
     );
     _priceController = TextEditingController(
-      text: g?.purchasePrice != null ? g!.purchasePrice!.toInt().toString() : '',
+      text: g?.purchasePrice != null && g!.purchasePrice! > 0
+          ? Formatters.formatNumber(g.purchasePrice!.toInt())
+          : '',
     );
     _notesController = TextEditingController(text: g?.notes ?? '');
     _genreInputController = TextEditingController();
@@ -791,11 +794,14 @@ class _GameFormScreenState extends ConsumerState<GameFormScreen> {
               TextFormField(
                 controller: _priceController,
                 keyboardType: TextInputType.number,
+                inputFormatters: [
+                  ThousandsSeparatorInputFormatter(),
+                ],
                 style: const TextStyle(color: AppColors.textPrimary),
                 decoration: const InputDecoration(
                   labelText: 'Harga Beli (Rp)',
                   prefixText: 'Rp ',
-                  hintText: 'Kosongkan jika gratis / langganan',
+                  hintText: '120.000 (Kosongkan jika gratis)',
                   prefixIcon: Icon(Icons.payments_outlined,
                       color: AppColors.textMuted, size: 20),
                 ),

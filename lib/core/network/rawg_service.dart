@@ -17,11 +17,90 @@ class RawgGameResult {
     this.releaseYear,
   });
 
+  static bool _isExcludedTag(String tagLower) {
+    // 1. Steam & Store / Technical
+    if (tagLower.contains('steam') ||
+        tagLower.contains('controller') ||
+        tagLower.contains('cloud') ||
+        tagLower.contains('achievement') ||
+        tagLower.contains('trading card') ||
+        tagLower.contains('workshop') ||
+        tagLower.contains('leaderboard') ||
+        tagLower.contains('remote play') ||
+        tagLower.contains('in-app') ||
+        tagLower.contains('captions') ||
+        tagLower.contains('commentary') ||
+        tagLower.contains('level editor') ||
+        tagLower.contains('exclusive') ||
+        tagLower.contains('cross-platform') ||
+        tagLower.contains('geforce') ||
+        tagLower.contains('family sharing') ||
+        tagLower.contains('hdr') ||
+        tagLower.contains('vr') ||
+        tagLower.contains('trackir')) {
+      return true;
+    }
+
+    // 2. Adult / Mature content tags
+    if (tagLower.contains('sexual') ||
+        tagLower.contains('nudity') ||
+        tagLower.contains('nsfw') ||
+        tagLower.contains('erotic') ||
+        tagLower.contains('hentai') ||
+        tagLower.contains('gore') ||
+        tagLower.contains('blood') ||
+        tagLower == 'violent' ||
+        tagLower == 'violence') {
+      return true;
+    }
+
+    // 3. Redundant / rating / store hype tags / non-genre
+    if (tagLower.contains('soundtrack') ||
+        tagLower.contains('music') ||
+        tagLower == 'masterpiece' ||
+        tagLower == 'remake' ||
+        tagLower == 'remaster' ||
+        tagLower == 're-release' ||
+        tagLower == 'mod' ||
+        tagLower == 'mods' ||
+        tagLower == 'stats' ||
+        tagLower == 'singleplayer') {
+      return true;
+    }
+
+    return false;
+  }
+
   factory RawgGameResult.fromJson(Map<String, dynamic> json) {
-    final genresList = (json['genres'] as List<dynamic>?)
-            ?.map((g) => g['name'] as String)
+    final rawGenres = (json['genres'] as List<dynamic>?)
+            ?.map((g) => (g['name'] as String?)?.trim() ?? '')
+            .where((g) => g.isNotEmpty)
             .toList() ??
         [];
+
+    final List<String> enrichedGenres = List<String>.from(rawGenres);
+    final seen = rawGenres.map((g) => g.toLowerCase()).toSet();
+
+    // Ekstraksi tag yang relevan dari tags untuk melengkapi genre (misal: JRPG, Anime, Story Rich, Turn-Based, dll.)
+    final rawTags = json['tags'] as List<dynamic>? ?? [];
+    for (final t in rawTags) {
+      if (t is! Map<String, dynamic>) continue;
+      final lang = t['language'] as String?;
+      if (lang != null && lang != 'eng') continue;
+
+      final name = (t['name'] as String?)?.trim() ?? '';
+      if (name.isEmpty) continue;
+
+      final nameLower = name.toLowerCase();
+      if (seen.contains(nameLower)) continue;
+      if (_isExcludedTag(nameLower)) continue;
+
+      seen.add(nameLower);
+      enrichedGenres.add(name);
+
+      if (enrichedGenres.length >= 6) break;
+    }
+
     int? year;
     if (json['released'] != null) {
       year = DateTime.tryParse(json['released'] as String)?.year;
@@ -29,7 +108,7 @@ class RawgGameResult {
     return RawgGameResult(
       title: json['name'] as String? ?? '',
       imageUrl: json['background_image'] as String?,
-      genres: genresList,
+      genres: enrichedGenres,
       releaseYear: year,
     );
   }
